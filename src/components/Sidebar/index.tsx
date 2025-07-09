@@ -31,7 +31,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     { name: "Profile", icon: <User className="w-5 h-5" />, route: "/profile" },
     { name: "Settings", icon: <Settings className="w-5 h-5" />, route: "/settings" },
     { name: "Help and Support", icon: <HelpCircle className="w-5 h-5" /> , route: "/help"},
-    { name: " Education & Support", icon: <HelpingHand className="w-5 h-5" /> , route: "/help"},
+    { name: "Education & Support", icon: <HelpingHand className="w-5 h-5" /> , route: "/help"},
 
 
   ];
