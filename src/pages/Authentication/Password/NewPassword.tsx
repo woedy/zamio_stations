@@ -1,52 +1,29 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { baseUrl } from '../../constants';
-import ButtonLoader from '../../common/button_loader';
+import { baseUrl } from '../../../constants';
+import ButtonLoader from '../../../common/button_loader';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
-const SignUp = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-
-  const [email, setEmail] = useState('');
-  const [contactNumber, setContactNumber] = useState('');
-
+const NewPassword = () => {
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
 
   const [inputError, setInputError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
+  const email = location.state?.email;
+
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate email
-    if (!validateEmail(email)) {
-      setInputError('Invalid email address');
-      return;
-    }
-
     // Clear any previous error
     setInputError('');
-
-    if (firstName === '') {
-      setInputError('First name required.');
-      return;
-    }
-
-    if (lastName === '') {
-      setInputError('Last name required.');
-      return;
-    }
-
-    if (contactNumber === '') {
-      setInputError('Contact number required.');
-      return;
-    }
 
     if (password === '') {
       setInputError('Passwords required.');
@@ -72,15 +49,12 @@ const SignUp = () => {
 
     // Create FormData object
     const formData = new FormData();
-    formData.append('password', password);
-    formData.append('password2', password2);
-    formData.append('phone', contactNumber);
     formData.append('email', email);
-    formData.append('first_name', firstName);
-    formData.append('last_name', lastName);
+    formData.append('new_password', password);
+    formData.append('new_password2', password2);
 
     // Make a POST request to the server
-    const url = baseUrl + 'api/accounts/register-station/';
+    const url = baseUrl + 'api/accounts/new-password-reset/';
 
     try {
       setLoading(true);
@@ -97,25 +71,25 @@ const SignUp = () => {
           const errorMessages = Object.values(data.errors).flat();
           setInputError(errorMessages.join('\n'));
         } else {
-          setInputError(data.message || 'Failed to register');
+          setInputError(data.message || 'Failed to reset password');
         }
         return; // Prevent further code execution
       }
 
       // Registration successful
-      console.log('User registered successfully');
-      navigate('/verify-email', { state: { email } });
+      console.log('Password reset successfully');
+
+      navigate('/sign-in', {
+        state: {
+          successMessage: 'Password reset successfully! You can now log in.',
+        },
+      });
     } catch (error) {
       console.error('Error registering user:', error.message);
-      setInputError('Failed to register');
+      setInputError('Failed to reset password');
     } finally {
       setLoading(false);
     }
-  };
-
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
   };
 
   const validatePassword = (password) => {
@@ -140,59 +114,19 @@ const SignUp = () => {
 
         <div className="bg-white/10 p-10 rounded-2xl backdrop-blur-md w-full border border-white/20 shadow-xl">
           <h2 className="text-4xl font-bold text-white text-center mb-8">
-            🎧 Station Register
+            New Password
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                type="text"
-                name="firstName"
-                placeholder="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="w-full px-6 py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-
-              <input
-                type="text"
-                name="lastName"
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className="w-full px-6 py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-
-            {/* Email Input */}
-            <input
-              type="email"
-              name="email"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-6 py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-
-            {/* Phone Input */}
-            <input
-              type="number"
-              name="contact"
-              placeholder="Phone"
-              value={contactNumber}
-              onChange={(e) => setContactNumber(e.target.value)}
-              className="w-full px-6 py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-
-            <div className="grid grid-cols-2 gap-2">
+            <div className="">
               <div className="relative w-full">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
-                  placeholder="Password"
+                  placeholder="New Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-6 py-4 pr-12 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full px-6 py-4 pr-12 mb-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
                 <button
                   type="button"
@@ -240,25 +174,14 @@ const SignUp = () => {
                 type="submit"
                 className="w-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-4 rounded-lg mt-6 "
               >
-                Register
+                Reset Password
               </button>
             )}
           </form>
-
-          {/* Link to Register */}
-          <p className=" text-white mt-6 text-center">
-            Already have an account?{' '}
-            <Link
-              to="/sign-in"
-              className="underline text-blue-400 hover:text-blue-200"
-            >
-              Login here
-            </Link>
-          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default SignUp;
+export default NewPassword;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Search, Bell, Settings, User, HelpCircle, MessageSquare, Upload, Clock, CreditCard, MapPin, ReceiptPoundSterling, Receipt, ReceiptCent, HelpingHand } from "lucide-react";
+import { Search, Bell, Settings, User, HelpCircle, MessageSquare, Upload, Clock, CreditCard, MapPin, ReceiptPoundSterling, Receipt, ReceiptCent, HelpingHand, Radio, AudioWaveformIcon } from "lucide-react";
 
 
 interface SidebarProps {
@@ -24,14 +24,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   const navigationItems = [
     { name: "Dashboard", icon: <Settings className="w-5 h-5" />, route: "/dashboard"},
-    { name: "Match Log Viewer", icon: <Clock className="w-5 h-5" />, route: "/play-history" },
-    { name: "Reports & Compliance Exports", icon: <ReceiptCent className="w-5 h-5" />, route: "/upload" },
-    { name: "Match Dispute Management", icon: <CreditCard className="w-5 h-5" />, route: "/royalty-payments" },
+    { name: "Match Log Viewer", icon: <Clock className="w-5 h-5" />, route: "/match-logs" },
+    { name: "Match Dispute Management", icon: <CreditCard className="w-5 h-5" />, route: "/match-disputes" },
     { name: "Notifications", icon: <Bell className="w-5 h-5" /> , route: "/notifications"},
     { name: "Profile", icon: <User className="w-5 h-5" />, route: "/profile" },
+    { name: "Education & Support", icon: <HelpCircle className="w-5 h-5" /> , route: "/help"},
     { name: "Settings", icon: <Settings className="w-5 h-5" />, route: "/settings" },
-    { name: "Help and Support", icon: <HelpCircle className="w-5 h-5" /> , route: "/help"},
-    { name: "Education & Support", icon: <HelpingHand className="w-5 h-5" /> , route: "/help"},
+
+    { name: "----------", icon: "" , route: "#"},
+    { name: "Radio Stream", icon: <Radio className="w-5 h-5" /> , route: "/radio-stream"},
+    { name: "Audio File Match", icon: <AudioWaveformIcon className="w-5 h-5" /> , route: "/audio-stream"},
 
 
   ];
@@ -80,7 +82,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-        <NavLink to="/dasboard">
+        <NavLink to="/dashboard">
           <div className="flex items-center gap-2">
           
 

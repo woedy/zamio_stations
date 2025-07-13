@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Music, TrendingUp, MapPin, Activity, Users, Calendar, Settings, Bell, Search, Filter, BarChart3, PieChart, Globe, Zap, Radio, Volume2, Eye, Star, Clock, Target } from 'lucide-react';
 
-const Dashboard = () => {
+const StationDashboard = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -307,4 +307,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default StationDashboard;

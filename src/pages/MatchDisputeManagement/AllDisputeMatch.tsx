@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Activity, Search, Eye, Logs } from 'lucide-react';
 
-const MatchLogViewer = () => {
+const AllDisputeMatches = () => {
   const [activeTab, setActiveTab] = useState('playlogs');
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
 
@@ -84,10 +84,10 @@ const MatchLogViewer = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white">
-                  Full Detection view
+                  Match Disputes
                 </h1>
                 <p className="text-gray-300 text-sm">
-                  All Matched songs detected and accumulated royalties
+                  All Matched disputes flagged.
                 </p>
               </div>
             </div>
@@ -110,24 +110,6 @@ const MatchLogViewer = () => {
         <div className="flex justify-between">
           {/* Period Selector */}
 
-          <div className="flex space-x-2 mb-8 bg-white/10 backdrop-blur-md p-1 rounded-lg border border-white/20 w-fit">
-            <TabButton
-              id="playlogs"
-              label="Play Logs"
-              icon={Activity}
-              isActive={activeTab === 'playlogs'}
-              onClick={setActiveTab}
-            />
-
-            <TabButton
-              id="matchlogs"
-              label="Match Logs"
-              icon={Eye}
-              isActive={activeTab === 'matchlogs'}
-              onClick={setActiveTab}
-            />
-          </div>
-
           <div className="mb-8">
             <div className="flex space-x-2 bg-white/10 backdrop-blur-md p-1 rounded-lg border border-white/20 w-fit">
               {['daily', 'weekly', 'monthly', 'all-time'].map((period) => (
@@ -149,12 +131,11 @@ const MatchLogViewer = () => {
 
         {/* Tab Content */}
         <div className="space-y-8">
-          {/* Play Logs Tab */}
-          {activeTab === 'playlogs' && (
+         
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
               <h2 className="text-xl font-bold text-white mb-6 flex items-center">
                 <Activity className="w-5 h-5 mr-2 text-blue-400" />
-                Detailed Play Logs
+                Match Disputes
               </h2>
               <div className="overflow-auto rounded-xl">
                 <table className="min-w-full text-sm text-left text-gray-300">
@@ -168,8 +149,9 @@ const MatchLogViewer = () => {
                       <th className="px-4 py-3">Avg. Confidence</th>
                       <th className="px-4 py-3">Earnings</th>
                       <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Dispute Match</th>
                       <th className="px-4 py-3">Dispute Comments</th>
+
+                      <th className="px-4 py-3">Review</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white/5 divide-y divide-white/10">
@@ -185,78 +167,31 @@ const MatchLogViewer = () => {
                           ₵{log.earnings.toFixed(2)}
                         </td>
                         <td className="px-4 py-2">{log.status}</td>
+         
+                        <td className="px-4 py-2">Dispute comments here....</td>
                         <td className="px-4 py-2">
-                          {' '}
+                       
                           <button className="w-full text-xs bg-red-600 text-white py-2 rounded-sm font-semibold hover:shadow-lg transition-shadow">
-                            Flag
+                            {' '}
+                            Review
                           </button>
                         </td>
 
-                        <td className="px-4 py-2">Dispute comments here....</td>
-
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
-          )}
+      
 
-          {activeTab === 'matchlogs' && (
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-              <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-                <Activity className="w-5 h-5 mr-2 text-blue-400" />
-                Detailed Match Logs
-              </h2>
-              <div className="overflow-auto rounded-xl">
-                <table className="min-w-full text-sm text-left text-gray-300">
-                  <thead className="text-xs uppercase bg-white/5 text-gray-400">
-                    <tr>
-                      <th className="px-4 py-3">Song</th>
-                      <th className="px-4 py-3">Artist</th>
-                      <th className="px-4 py-3">Start Date & Time</th>
-                      <th className="px-4 py-3">Confidence</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white/5 divide-y divide-white/10">
-                    {playLogs.map((log) => (
-                      <tr key={log.id}>
-                        <td className="px-4 py-2 text-white">{log.song}</td>
-                        <td className="px-4 py-2">{log.station}</td>
-                        <td className="px-4 py-2">{log.date}</td>
-                        <td className="px-4 py-2">{log.confidence}%</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+      
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-        <h2 className="text-xl font-bold text-white mb-4">
-          Reports & Compliance Exports
-        </h2>
-        <div className=" flex space-x-3">
-          <button className="w-full bg-gradient-to-r text-sm from-green to-orange-500 text-white py-2 rounded-xl font-semibold hover:shadow-lg transition-shadow">
-            Generate Report
-          </button>
-          <button className="w-full bg-white/10 text-sm text-white py-2 rounded-xl font-semibold border border-white/20 hover:bg-white/20 transition-colors">
-            Export Data
-          </button>
-          <button className="w-full bg-white/10 text-sm text-white py-2 rounded-xl font-semibold border border-white/20 hover:bg-white/20 transition-colors">
-            Schedule Analysis
-          </button>
-          <button className="w-full bg-white/10 text-sm text-white py-2 rounded-xl font-semibold border border-white/20 hover:bg-white/20 transition-colors">
-            Proof of Compliance
-          </button>
-        </div>
-      </div>
+  
     </div>
   );
 };
 
-export default MatchLogViewer;
+export default AllDisputeMatches;

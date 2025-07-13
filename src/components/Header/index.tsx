@@ -57,7 +57,7 @@ const Header = (props: {
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link className="block flex-shrink-0 lg:hidden" to="/">
+          <Link className="block flex-shrink-0 lg:hidden" to="/dashboard">
           <h4 className="mb-1 text-2xl font-semibold text-black dark:text-white">
                 {'ZamIO'}
               </h4>
