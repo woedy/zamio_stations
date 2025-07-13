@@ -135,7 +135,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                  <NavLink to={item.route}>
                  
                 <button
-                  className={`flex items-center w-full px-6 py-3 hover:bg-indigo-900 transition-colors ${
+                  className={`flex items-center text-sm w-full px-6 py-2 hover:bg-indigo-900 transition-colors ${
                     activeTab === item.name ? "bg-indigo-900 font-semibold" : ""
                   }`}
                   onClick={() => setActiveTab(item.name)}

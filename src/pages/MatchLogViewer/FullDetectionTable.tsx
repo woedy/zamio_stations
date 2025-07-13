@@ -161,7 +161,7 @@ const MatchLogViewer = () => {
                   <thead className="text-xs uppercase bg-white/5 text-gray-400">
                     <tr>
                       <th className="px-4 py-3">Song</th>
-                      <th className="px-4 py-3">Station</th>
+                      <th className="px-4 py-3">Artist</th>
                       <th className="px-4 py-3">Start Date & Time</th>
                       <th className="px-4 py-3">End Date & Time</th>
                       <th className="px-4 py-3">Duration</th>
