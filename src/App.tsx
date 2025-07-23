@@ -13,15 +13,13 @@ import VerifyEmail from './pages/Authentication/VerifyEmail';
 import RadioStreamMonitor from './pages/PlayGround/RadioStreamMonitor';
 import AudioFileMatcher from './pages/PlayGround/AudioFileMatcher';
 import StationDashboard from './pages/PlayGround/StationDashboard';
-import ArtistDashboard from './pages/PlayGround/ArtistDashboard';
-import TrackDetailsPage from './pages/PlayGround/TrackDetails';
 import Dashboard from './pages/Dashboard/Dashboard';
-import ArtistProfilePage from './pages/PlayGround/ArtistProfile';
 import MatchLogViewer from './pages/MatchLogViewer/FullDetectionTable';
 import AllDisputeMatches from './pages/MatchDisputeManagement/AllDisputeMatch';
 import StationProfilePage from './pages/StationManagement/StationProfile';
 import NotificationCenter from './pages/NotificationCenter/NotificationCenter';
 import EducationSupport from './pages/Education&Support/HelpSupport';
+import DisputeDetails from './pages/MatchDisputeManagement/DisputeDetails';
 
 const hiddenOnRoutes = [
   '/',
@@ -55,7 +53,7 @@ function App() {
           path="/dashboard"
           element={
             <>
-              <PageTitle title="Artist Dasboard | ZamIO Stations" />
+              <PageTitle title="Station Dasboard | ZamIO Stations" />
               <Dashboard />
             </>
           }
@@ -64,7 +62,7 @@ function App() {
           path="/match-logs"
           element={
             <>
-              <PageTitle title="Artist Dasboard | ZamIO Stations" />
+              <PageTitle title="Match Log | ZamIO Stations" />
               <MatchLogViewer />
             </>
           }
@@ -75,6 +73,15 @@ function App() {
             <>
               <PageTitle title="All Match Disputes | ZamIO Stations" />
               <AllDisputeMatches />
+            </>
+          }
+        />
+        <Route
+          path="/match-dispute-details"
+          element={
+            <>
+              <PageTitle title="Dispute Details | ZamIO Stations" />
+              <DisputeDetails />
             </>
           }
         />
@@ -132,33 +139,8 @@ function App() {
             </>
           }
         />
-        <Route
-          path="/artist-dashboard"
-          element={
-            <>
-              <PageTitle title="Artist Dashboard | ZamIO Stations" />
-              <ArtistDashboard />
-            </>
-          }
-        />
-        <Route
-          path="/track-dashboard"
-          element={
-            <>
-              <PageTitle title="Artist Dashboard | ZamIO Stations" />
-              <TrackDetailsPage />
-            </>
-          }
-        />
-        <Route
-          path="/artist-profile"
-          element={
-            <>
-              <PageTitle title="Artist Dashboard | ZamIO Stations" />
-              <ArtistProfilePage />
-            </>
-          }
-        />
+    
+    
       </Routes>
     </DefaultLayout>
   ) : (

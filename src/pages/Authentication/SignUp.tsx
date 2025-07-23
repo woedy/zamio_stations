@@ -7,6 +7,7 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 const SignUp = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [stationName, setStationName] = useState('');
 
   const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
@@ -40,6 +41,10 @@ const SignUp = () => {
 
     if (lastName === '') {
       setInputError('Last name required.');
+      return;
+    }
+    if (stationName === '') {
+      setInputError('Station name required.');
       return;
     }
 
@@ -78,6 +83,7 @@ const SignUp = () => {
     formData.append('email', email);
     formData.append('first_name', firstName);
     formData.append('last_name', lastName);
+    formData.append('station_name', stationName);
 
     // Make a POST request to the server
     const url = baseUrl + 'api/accounts/register-station/';
@@ -148,7 +154,7 @@ const SignUp = () => {
               <input
                 type="text"
                 name="firstName"
-                placeholder="First Name"
+                placeholder="Manager First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 className="w-full px-6 py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -157,11 +163,24 @@ const SignUp = () => {
               <input
                 type="text"
                 name="lastName"
-                placeholder="Last Name"
+                placeholder="Manager Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 className="w-full px-6 py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
+            </div>
+
+            <div className="">
+              <input
+                type="text"
+                name="stationName"
+                placeholder="Station Name"
+                value={stationName}
+                onChange={(e) => setStationName(e.target.value)}
+                className="w-full px-6 py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+
+       
             </div>
 
             {/* Email Input */}

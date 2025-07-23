@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
-import { Play, Music, TrendingUp, MapPin, Activity, Users, Calendar, Settings, Bell, Search, Filter, BarChart3, PieChart, Globe, Zap, Radio, Volume2, Eye, Star, Clock, Target } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Music, TrendingUp, MapPin, Activity, Settings, Bell, Search, Globe, Zap, Radio, Volume2, Eye, Target } from 'lucide-react';
+import { baseUrl, stationID, userToken } from '../../constants';
 
 const Dashboard = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
   const [activeTab, setActiveTab] = useState('overview');
 
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const [totalSongs, setTotalSongs] = useState('');
+  const [totalPlays, setTotalPlays] = useState('');
+  const [confidenceScore, setConfidenceScore] = useState('');
+  const [activeRegions, setActiveRegions] = useState('');
+  const [stationName, setStationName] = useState('');
+  const [topSongs, setTopSongs] = useState([]);
+  const [airplayData, setAirplayData] = useState([]);
+  const [regionalData, setRegionalData] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
   // Sample data
-  const totalSongs = 2847;
-  const monthlyPlays = 15429;
-  const topSongs = [
+  const totalSongs22 = 2847;
+  const monthlyPlays22 = 15429;
+  const confidenceScore22 = 87.9;
+  const activeRegions77 = 8;
+  const topSongs222 = [
     { title: "Sika Aba Fie", artist: "Sarkodie", plays: 1245, confidence: 98 },
     { title: "Thunder Fire You", artist: "Shatta Wale", plays: 1121, confidence: 96 },
     { title: "Enjoyment", artist: "Kuami Eugene", plays: 987, confidence: 94 },
@@ -16,7 +32,7 @@ const Dashboard = () => {
     { title: "Party", artist: "Dancegod Lloyd", plays: 723, confidence: 89 }
   ];
 
-  const airplayData = [
+  const airplayData222 = [
     { day: 'Mon', plays: 2134 },
     { day: 'Tue', plays: 2856 },
     { day: 'Wed', plays: 3124 },
@@ -26,7 +42,7 @@ const Dashboard = () => {
     { day: 'Sun', plays: 3876 }
   ];
 
-  const regionalData = [
+  const regionalData222 = [
     { region: 'Greater Accra', plays: 8234, growth: 12.5 },
     { region: 'Ashanti', plays: 6543, growth: 8.3 },
     { region: 'Northern', plays: 3456, growth: 15.2 },
@@ -36,6 +52,49 @@ const Dashboard = () => {
 
   const maxPlays = Math.max(...airplayData.map(d => d.plays));
   const maxRegionalPlays = Math.max(...regionalData.map(d => d.plays));
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          baseUrl + `api/stations/dashboard/?station_id=${stationID}&period=${selectedPeriod}`,          
+          {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${userToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setTotalSongs(data.data.totalSongs);
+        setTotalPlays(data.data.totalPlays);
+        setConfidenceScore(data.data.confidenceScore);
+        setActiveRegions(data.data.activeRegions);
+        setTopSongs(data.data.topSongs);
+        setAirplayData(data.data.airplayData);
+        setRegionalData(data.data.regionalData);
+        setStationName(data.data.stationName);
+    
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedPeriod]);
+
+
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br ">
@@ -48,7 +107,7 @@ const Dashboard = () => {
                 <Radio className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Peace FM</h1>
+                <h1 className="text-2xl font-bold text-white">{stationName}</h1>
                 <p className="text-gray-300 text-sm">Station Dashboard</p>
               </div>
             </div>
@@ -113,7 +172,7 @@ const Dashboard = () => {
                 <Volume2 className="w-6 h-6 text-green-400" />
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">{monthlyPlays.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-white">{totalPlays.toLocaleString()}</div>
                 <div className="text-sm text-gray-300">Monthly Plays</div>
               </div>
             </div>
@@ -126,7 +185,7 @@ const Dashboard = () => {
                 <Target className="w-6 h-6 text-orange-400" />
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">94.2%</div>
+                <div className="text-2xl font-bold text-white">{confidenceScore}%</div>
                 <div className="text-sm text-gray-300">Avg Confidence</div>
               </div>
             </div>
@@ -139,7 +198,7 @@ const Dashboard = () => {
                 <Globe className="w-6 h-6 text-purple-400" />
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-white">5</div>
+                <div className="text-2xl font-bold text-white">{activeRegions}</div>
                 <div className="text-sm text-gray-300">Active Regions</div>
               </div>
             </div>
@@ -254,7 +313,7 @@ const Dashboard = () => {
               </div>
               <div className="space-y-4">
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-white mb-2">94.2%</div>
+                  <div className="text-4xl font-bold text-white mb-2">{confidenceScore}%</div>
                   <div className="text-sm text-gray-300">Average Match Certainty</div>
                 </div>
                 <div className="space-y-3">

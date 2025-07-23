@@ -1,11 +1,26 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Activity, Search, Eye, Logs } from 'lucide-react';
+import { baseUrl, stationID, userToken } from '../../constants';
+import { Link } from 'react-router-dom';
 
 const AllDisputeMatches = () => {
   const [activeTab, setActiveTab] = useState('playlogs');
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
 
-  const playLogs = [
+  const [search, setSearch] = useState('');
+
+  const [orderDisputes, setOrderDisputes] = useState('');
+
+
+  const [page, setPage] = useState(1);
+  const [itemCount, setItemCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(1); // Default to 1 to avoid issues
+  const [loading, setLoading] = useState(false);
+ 
+  const[disputes, setDisputes]= useState([]);
+
+
+  const playLogs22 = [
     {
       id: 1,
       song: 'Midnight Vibes',
@@ -57,6 +72,49 @@ const AllDisputeMatches = () => {
       status: 'Dispute',
     },
   ];
+
+
+
+    
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${baseUrl}api/music-monitor/stations-match-disputes/?search=${encodeURIComponent(
+          search,
+        )}&station_id=${encodeURIComponent(
+          stationID,
+        )}&order_by=${encodeURIComponent(orderDisputes)}&page=${page}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${userToken}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setDisputes(data.data.disputes);
+      setTotalPages(data.data.pagination.total_pages);
+      setItemCount(data.data.pagination.count);
+      console.log('Total Pages:', data.data.pagination.total_pages);
+      console.log('ppp:', data.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [baseUrl, search, page, userToken, orderDisputes]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+
 
   const TabButton = ({ id, label, icon: Icon, isActive, onClick }) => (
     <button
@@ -131,65 +189,64 @@ const AllDisputeMatches = () => {
 
         {/* Tab Content */}
         <div className="space-y-8">
-         
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-              <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-                <Activity className="w-5 h-5 mr-2 text-blue-400" />
-                Match Disputes
-              </h2>
-              <div className="overflow-auto rounded-xl">
-                <table className="min-w-full text-sm text-left text-gray-300">
-                  <thead className="text-xs uppercase bg-white/5 text-gray-400">
-                    <tr>
-                      <th className="px-4 py-3">Song</th>
-                      <th className="px-4 py-3">Station</th>
-                      <th className="px-4 py-3">Start Date & Time</th>
-                      <th className="px-4 py-3">End Date & Time</th>
-                      <th className="px-4 py-3">Duration</th>
-                      <th className="px-4 py-3">Avg. Confidence</th>
-                      <th className="px-4 py-3">Earnings</th>
-                      <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Dispute Comments</th>
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center">
+              <Activity className="w-5 h-5 mr-2 text-blue-400" />
+              Match Disputes
+            </h2>
+            <div className="overflow-auto rounded-xl">
+              <table className="min-w-full text-sm text-left text-gray-300">
+                <thead className="text-xs uppercase bg-white/5 text-gray-400">
+                  <tr>
+                    <th className="px-4 py-3">Song</th>
+                    <th className="px-4 py-3">Artist</th>
+                    <th className="px-4 py-3">Start Date & Time</th>
+                    <th className="px-4 py-3">End Date & Time</th>
+                    <th className="px-4 py-3">Duration</th>
+                    <th className="px-4 py-3">Avg. Confidence</th>
+                    <th className="px-4 py-3">Earnings</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Dispute Comments</th>
+                    <th className="px-4 py-3">Timestamp</th>
 
-                      <th className="px-4 py-3">Review</th>
+                    <th className="px-4 py-3">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white/5 divide-y divide-white/10">
+                  {disputes?.map((log) => (
+                    <tr key={log.id}>
+                      <td className="px-4 py-2 text-white">{log.track_title}</td>
+                      <td className="px-4 py-2">{log.artist_name}</td>
+                      <td className="px-4 py-2">{log.start_time}</td>
+                      <td className="px-4 py-2">{log.stop_time}</td>
+                      <td className="px-4 py-2">{log.duration}</td>
+                      <td className="px-4 py-2">{log.confidence}%</td>
+                      <td className="px-4 py-2 text-green-400 font-medium">
+                        ₵{log.earnings.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2">{log.status}</td>
+
+                      <td className="px-4 py-2">{log.comment}</td>
+                      <td className="px-4 py-2">{log.timestamp}</td>
+                      <td className="px-4 py-2">
+                      <Link to="/match-dispute-details" state={{ dispute_id: log?.id }}>
+                        <button className="w-full text-xs bg-red-600 text-white py-2 rounded-sm font-semibold hover:shadow-lg transition-shadow">
+                          {' '}
+                          Review
+                        </button>
+
+                        </Link>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="bg-white/5 divide-y divide-white/10">
-                    {playLogs.map((log) => (
-                      <tr key={log.id}>
-                        <td className="px-4 py-2 text-white">{log.song}</td>
-                        <td className="px-4 py-2">{log.station}</td>
-                        <td className="px-4 py-2">{log.date}</td>
-                        <td className="px-4 py-2">{log.date}</td>
-                        <td className="px-4 py-2">{log.duration}</td>
-                        <td className="px-4 py-2">{log.confidence}%</td>
-                        <td className="px-4 py-2 text-green-400 font-medium">
-                          ₵{log.earnings.toFixed(2)}
-                        </td>
-                        <td className="px-4 py-2">{log.status}</td>
-         
-                        <td className="px-4 py-2">Dispute comments here....</td>
-                        <td className="px-4 py-2">
-                       
-                          <button className="w-full text-xs bg-red-600 text-white py-2 rounded-sm font-semibold hover:shadow-lg transition-shadow">
-                            {' '}
-                            Review
-                          </button>
-                        </td>
-
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
-      
 
-      
+
+          </div>
         </div>
       </div>
-
-  
     </div>
   );
 };
