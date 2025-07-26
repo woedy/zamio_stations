@@ -144,7 +144,7 @@ export default function ReviewDetails() {
     };
 
     try {
-      const response = await fetch(`${baseUrl}api/music-monitor/flag-playlog/`, {
+      const response = await fetch(`${baseUrl}api/music-monitor/review-match-for-dispute/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
