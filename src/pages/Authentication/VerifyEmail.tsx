@@ -39,7 +39,7 @@ const VerifyEmail = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(baseUrl + 'api/accounts/verify-email/', {
+      const response = await fetch(baseUrl + 'api/accounts/verify-station-email/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -63,7 +63,25 @@ const VerifyEmail = () => {
       }
 
       // Success
-      navigate('/sign-in', { state: { successMessage: 'Email verified successfully! You can now log in.' } });
+
+      localStorage.setItem('first_name', data.data.first_name);
+      localStorage.setItem('last_name', data.data.last_name);
+      localStorage.setItem('user_id', data.data.user_id);
+      localStorage.setItem('artist_id', data.data.artist_id);
+      localStorage.setItem('email', data.data.email);
+      localStorage.setItem('photo', data.data.photo);
+      localStorage.setItem('token', data.data.token);
+
+      if(data.data.profile_completed === true){
+        navigate('/dashboard');
+        window.location.reload();
+      }else {
+        navigate('/onboarding/profile', { state: { successMessage: 'Email verified successfully!' } });
+        window.location.reload();
+
+      }
+
+
     } catch (err) {
       setInputError('Verification error. Please try again.');
     } finally {

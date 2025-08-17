@@ -20,12 +20,20 @@ import StationProfilePage from './pages/StationManagement/StationProfile';
 import NotificationCenter from './pages/NotificationCenter/NotificationCenter';
 import EducationSupport from './pages/Education&Support/HelpSupport';
 import DisputeDetails from './pages/MatchDisputeManagement/DisputeDetails';
+import CompleteProfile from './pages/Authentication/Onboarding/CompleteProfile';
+import ReportMethod from './pages/Authentication/Onboarding/ReportMethod';
+import PaymentInfo from './pages/Authentication/Onboarding/PaymentInfo';
+import AddStaff from './pages/Authentication/Onboarding/AddStaff';
 
 const hiddenOnRoutes = [
   '/',
   '/sign-up',
   '/sign-in',
   '/verify-email',
+  '/onboarding/profile',
+  '/onboarding/report',
+  '/onboarding/staff',
+  '/onboarding/payment',
   '/audio-match',
 ];
 
@@ -180,6 +188,45 @@ function App() {
             <>
               <PageTitle title="Verify Email | ZamIO-station" />
               <VerifyEmail />
+            </>
+          }
+        />
+
+        <Route
+          path="/onboarding/profile"
+          element={
+            <>
+              <PageTitle title="Complete Profile | ZamIO-Station" />
+              <CompleteProfile />
+            </>
+          }
+        />
+        <Route
+          path="/onboarding/staff"
+          element={
+            <>
+              <PageTitle title="Complete Add Staff | ZamIO-Station" />
+              <AddStaff />
+            </>
+          }
+        />
+
+        <Route
+          path="/onboarding/report"
+          element={
+            <>
+              <PageTitle title="Complete Report Method | ZamIO-Station" />
+              <ReportMethod />
+            </>
+          }
+        />
+
+        <Route
+          path="/onboarding/payment"
+          element={
+            <>
+              <PageTitle title="Complete Payment | ZamIO-Station" />
+              <PaymentInfo />
             </>
           }
         />

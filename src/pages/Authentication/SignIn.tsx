@@ -26,12 +26,12 @@ const SignIn = () => {
     return () => clearTimeout(timer);
   }, []);
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validation
+  
     let isValid = true;
-
+  
     if (!email.trim()) {
       setEmailError('Email is required');
       isValid = false;
@@ -41,56 +41,79 @@ const SignIn = () => {
     } else {
       setEmailError('');
     }
-
+  
     if (!password.trim()) {
       setPasswordError('Password is required');
       isValid = false;
     } else {
       setPasswordError('');
     }
-
+  
     if (!isValid) return;
-
+  
     const url = baseUrl + 'api/accounts/login-station/';
-    const data = {
-      email,
-      password,
-      fcm_token,
-    };
-
+    const data = { email, password, fcm_token };
+  
     setLoading(true);
-
+  
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
+  
       const responseData = await response.json();
-
+  
       if (response.status === 200) {
-        localStorage.setItem('first_name', responseData.data.first_name);
-        localStorage.setItem('last_name', responseData.data.last_name);
-        localStorage.setItem('user_id', responseData.data.user_id);
-        localStorage.setItem('station_id', responseData.data.station_id);
-        localStorage.setItem('email', responseData.data.email);
-        localStorage.setItem('photo', responseData.data.photo);
-        localStorage.setItem('token', responseData.data.token);
+        const user = responseData.data;
+  
+        // Save to localStorage
+        localStorage.setItem('first_name', user.first_name);
+        localStorage.setItem('last_name', user.last_name);
+        localStorage.setItem('user_id', user.user_id);
+        localStorage.setItem('station_id', user.station_id);
+        localStorage.setItem('email', user.email);
+        localStorage.setItem('photo', user.photo);
+        localStorage.setItem('token', user.token);
+  
+        // Redirect based on onboarding step
+        const onboardingStep = user.onboarding_step;
+  
+        switch (onboardingStep) {
+          case 'profile':
+            navigate('/onboarding/profile');
+            break;
+          case 'staff':
+            navigate('/onboarding/staff');
+            break;
+          case 'report':
+            navigate('/onboarding/report');
+            break;
+          case 'payment':
+            navigate('/onboarding/payment');
+            break;
+          case 'done':
+          default:
+            navigate('/dashboard');
+            window.location.reload();
 
-        navigate('/dashboard');
-        window.location.reload();
+        }
+  
       } else if (response.status === 400) {
         setEmailError(responseData.errors?.email?.[0] || '');
         setPasswordError(responseData.errors?.password?.[0] || '');
-
-        if(responseData.errors?.email?.[0] === "Please check your email to confirm your account or resend confirmation email."){
-
+  
+        // Email not verified case
+        if (responseData.errors?.email?.[0] === "Please check your email to confirm your account or resend confirmation email.") {
           navigate('/verify-email', { state: { email } });
+  
+        // Profile incomplete fallback (rare case if onboarding_step isn't returned)
+        } else if (responseData.errors?.profile?.[0] === "Please complete your profile.") {
+          localStorage.setItem('token', responseData.errors?.token);
+          navigate('/onboarding/profile');
         }
-
-
-
+  
       } else {
         console.error('Login failed:', responseData.message);
       }
@@ -100,6 +123,9 @@ const SignIn = () => {
       setLoading(false);
     }
   };
+  
+
+
 
   return (
     <div className="h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] flex items-center justify-center">
