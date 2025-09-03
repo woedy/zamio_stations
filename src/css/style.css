@@ -12,6 +12,57 @@
 }
 
 @layer utilities {
+  /* Light-mode readability overrides within the app shell */
+  html:not(.dark) .app-shell {
+    /* Ensure a true light background & dark text base */
+    background-color: #f3f7fd; /* soft app canvas */
+    color: #0f172a; /* slate-900 */
+  }
+
+  /* Keep gradients for cards; do not override .bg-gradient-to-br globally */
+
+  /* Make text-white readable on light backgrounds */
+  html:not(.dark) .app-shell .text-white {
+    color: #0f172a !important; /* slate-900 */
+  }
+
+  /* Glass panels and subtle borders should be solid/light in light mode */
+  html:not(.dark) .app-shell .bg-white\/10,
+  html:not(.dark) .app-shell .bg-white\/5 {
+    background-color: #e9eef5 !important; /* card/section surface */
+  }
+  /* Page sub-headers should be transparent in light mode */
+  html:not(.dark) .app-shell header.bg-black\/20 {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  html:not(.dark) .app-shell .border-white\/10,
+  html:not(.dark) .app-shell .border-white\/20 {
+    border-color: #e5e7eb !important; /* gray-200 */
+  }
+
+  /* Inputs/buttons using translucent whites become proper light UI */
+  html:not(.dark) .app-shell .hover\:bg-white\/10:hover,
+  html:not(.dark) .app-shell .hover\:bg-white\/20:hover {
+    background-color: #dde6f1 !important; /* subtle hover */
+  }
+
+  /* Muted text colors for light mode */
+  html:not(.dark) .app-shell .text-gray-300 {
+    color: #475569 !important; /* slate-600 */
+  }
+  html:not(.dark) .app-shell .text-gray-400 {
+    color: #64748b !important; /* slate-500 */
+  }
+
+  /* Keep number badges readable when they relied on white text */
+  html:not(.dark) .app-shell .text-white.bg-white,
+  html:not(.dark) .app-shell .text-white.bg-gray-50 {
+    color: #111827 !important;
+  }
+
   /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;

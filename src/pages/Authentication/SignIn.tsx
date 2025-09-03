@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { baseUrl } from '../../constants';
+import api from '../../lib/api';
 import ButtonLoader from '../../common/button_loader';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -51,22 +52,15 @@ const SignIn = () => {
   
     if (!isValid) return;
   
-    const url = baseUrl + 'api/accounts/login-station/';
+    const url = 'api/accounts/login-station/';
     const data = { email, password, fcm_token };
   
     setLoading(true);
   
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-  
-      const responseData = await response.json();
-  
+      const response = await api.post(url, data);
       if (response.status === 200) {
-        const user = responseData.data;
+        const user = response.data.data;
   
         // Save to localStorage
         localStorage.setItem('first_name', user.first_name);
@@ -88,7 +82,7 @@ const SignIn = () => {
             navigate('/onboarding/staff');
             break;
           case 'report':
-            navigate('/onboarding/report');
+            navigate('/onboarding/payment');
             break;
           case 'payment':
             navigate('/onboarding/payment');
@@ -99,26 +93,34 @@ const SignIn = () => {
             window.location.reload();
 
         }
-  
-      } else if (response.status === 400) {
-        setEmailError(responseData.errors?.email?.[0] || '');
-        setPasswordError(responseData.errors?.password?.[0] || '');
-  
-        // Email not verified case
-        if (responseData.errors?.email?.[0] === "Please check your email to confirm your account or resend confirmation email.") {
+      }
+
+    } catch (err) {
+      // Using ts-ignore to avoid strict typing in catch
+      // @ts-ignore
+      const status = err?.response?.status;
+      // @ts-ignore
+      const data = err?.response?.data;
+      if (status) {
+        const emailMsg = data?.errors?.email?.[0];
+        const passwordMsg = data?.errors?.password?.[0];
+        if (emailMsg) setEmailError(emailMsg);
+        if (passwordMsg) setPasswordError(passwordMsg);
+        if (!emailMsg && !passwordMsg) {
+          setEmailError(data?.message || 'Login failed');
+        }
+
+        if (emailMsg === 'Please check your email to confirm your account or resend confirmation email.') {
           navigate('/verify-email', { state: { email } });
-  
-        // Profile incomplete fallback (rare case if onboarding_step isn't returned)
-        } else if (responseData.errors?.profile?.[0] === "Please complete your profile.") {
-          localStorage.setItem('token', responseData.errors?.token);
+        } else if (data?.errors?.profile?.[0] === 'Please complete your profile.') {
+          if (data?.errors?.token) {
+            localStorage.setItem('token', data.errors.token);
+          }
           navigate('/onboarding/profile');
         }
-  
       } else {
-        console.error('Login failed:', responseData.message);
+        setEmailError('Network error. Ensure the API is running.');
       }
-    } catch (error) {
-      console.error('Error:', error.message);
     } finally {
       setLoading(false);
     }

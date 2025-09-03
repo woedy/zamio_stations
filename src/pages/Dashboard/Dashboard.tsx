@@ -97,9 +97,9 @@ const Dashboard = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br ">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-black/20 backdrop-blur-md border-b border-white/10">
+      <header className="bg-black/20 border-b border-white/10 dark:backdrop-blur-md dark:bg-black/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">

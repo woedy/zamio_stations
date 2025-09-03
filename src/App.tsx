@@ -21,7 +21,6 @@ import NotificationCenter from './pages/NotificationCenter/NotificationCenter';
 import EducationSupport from './pages/Education&Support/HelpSupport';
 import DisputeDetails from './pages/MatchDisputeManagement/DisputeDetails';
 import CompleteProfile from './pages/Authentication/Onboarding/CompleteProfile';
-import ReportMethod from './pages/Authentication/Onboarding/ReportMethod';
 import PaymentInfo from './pages/Authentication/Onboarding/PaymentInfo';
 import AddStaff from './pages/Authentication/Onboarding/AddStaff';
 
@@ -31,7 +30,6 @@ const hiddenOnRoutes = [
   '/sign-in',
   '/verify-email',
   '/onboarding/profile',
-  '/onboarding/report',
   '/onboarding/staff',
   '/onboarding/payment',
   '/audio-match',
@@ -211,15 +209,6 @@ function App() {
           }
         />
 
-        <Route
-          path="/onboarding/report"
-          element={
-            <>
-              <PageTitle title="Complete Report Method | ZamIO-Station" />
-              <ReportMethod />
-            </>
-          }
-        />
 
         <Route
           path="/onboarding/payment"

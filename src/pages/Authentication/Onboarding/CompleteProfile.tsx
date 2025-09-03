@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {  baseUrl, stationID } from '../../../constants';
+import {  baseUrl } from '../../../constants';
+import { getStationId } from '../../../lib/auth';
+import api from '../../../lib/api';
 import ButtonLoader from '../../../common/button_loader';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -65,41 +67,21 @@ const CompleteProfile = () => {
   
     // Prepare FormData for file upload
     const formData = new FormData();
-    formData.append('station_id', stationID);
+    formData.append('station_id', getStationId());
     formData.append('bio', bio);
     formData.append('country', country);
     formData.append('region', region);
     formData.append('photo', selectedFile);
   
-    const url = baseUrl + 'api/accounts/complete-station-profile/';
+    const url = 'api/accounts/complete-station-profile/';
   
     try {
       setLoading(true);
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Authorization: `Token ${localStorage.getItem('token')}`,
-        },
-        body: formData,
-      });
-  
-      const data = await response.json();
-  
-      if (!response.ok) {
-        if (data.errors) {
-          const errorMessages = Object.values(data.errors).flat();
-          setInputError(errorMessages.join('\n'));
-        } else {
-          setInputError(data.message || 'Failed to update profile.');
-        }
-        return;
+      const resp = await api.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      let nextStep = resp.data?.data?.next_step as string | undefined;
+      if (!nextStep || nextStep === 'profile') {
+        nextStep = 'staff';
       }
-  
-      // ✅ Successful submission
-      console.log('Profile updated successfully');
-  
-      // Move to next onboarding step (backend returns this)
-      const nextStep = data.data.next_step;
   
       switch (nextStep) {
         case 'profile':
@@ -109,7 +91,7 @@ const CompleteProfile = () => {
           navigate('/onboarding/staff');
           break;
         case 'report':
-          navigate('/onboarding/report');
+          navigate('/onboarding/payment');
           break;
         case 'payment':
           navigate('/onboarding/payment');
@@ -233,12 +215,21 @@ const CompleteProfile = () => {
 
           {/* Link to Register */}
           <p className=" text-white mt-6 text-center">
-            <Link
-              to="/onboarding/report"
+            <button
               className="underline text-white hover:text-blue-200"
+              onClick={async (e) => {
+                e.preventDefault();
+                try {
+                  await api.post('api/accounts/skip-station-onboarding/', {
+                    station_id: getStationId(),
+                    step: 'staff',
+                  });
+                } catch {}
+                navigate('/onboarding/report');
+              }}
             >
               Skip
-            </Link>
+            </button>
           </p>
         </div>
       </div>

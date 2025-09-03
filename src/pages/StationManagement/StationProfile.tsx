@@ -26,7 +26,7 @@ const StationProfilePage = () => {
   const handleStreamSave = () => setEditingStream(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 text-white p-6">
       <div className="max-w-3xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-8 space-y-8 border border-white/20">
         {/* 🛰 Station Info */}
         <div className="flex justify-between items-start">

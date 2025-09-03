@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/33879.webp" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ZamIO Stations</title>
+    <script>
+      (function(){
+        try{
+          var t = localStorage.getItem('theme');
+          var m = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = t === 'dark' || ((t === null || t === 'system') && m);
+          var de = document.documentElement;
+          de.classList.toggle('dark', dark);
+          de.setAttribute('data-theme', dark ? 'dark' : 'light');
+        }catch(e){}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

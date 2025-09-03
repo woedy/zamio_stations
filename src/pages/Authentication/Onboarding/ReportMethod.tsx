@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { artistID, baseUrl, stationID } from '../../../constants';
+import { getStationId } from '../../../lib/auth';
+import api from '../../../lib/api';
 import ButtonLoader from '../../../common/button_loader';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -50,41 +52,21 @@ const ReportMethod = () => {
     
       // Prepare FormData for file upload
       const formData = new FormData();
-      formData.append('station_id', stationID);
+      formData.append('station_id', getStationId());
       formData.append('facebook', facebook);
       formData.append('twitter', twitter);
       formData.append('instagram', instagram);
       formData.append('youtube', youtube);
     
-      const url = baseUrl + 'api/accounts/complete-station-report-method/';
+      const url = 'api/accounts/complete-report-method/';
     
       try {
         setLoading(true);
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            Authorization: `Token ${localStorage.getItem('token')}`,
-          },
-          body: formData,
-        });
-    
-        const data = await response.json();
-    
-        if (!response.ok) {
-          if (data.errors) {
-            const errorMessages = Object.values(data.errors).flat();
-            setInputError(errorMessages.join('\n'));
-          } else {
-            setInputError(data.message || 'Failed to update social.');
-          }
-          return;
+        const resp = await api.post(url, formData);
+        let nextStep = resp.data?.data?.next_step as string | undefined;
+        if (!nextStep || nextStep === 'report') {
+          nextStep = 'payment';
         }
-    
-        // ✅ Successful submission
-        console.log('Social updated successfully');
-    
-        // Move to next onboarding step (backend returns this)
-        const nextStep = data.data.next_step;
     
         switch (nextStep) {
           case 'profile':
@@ -176,13 +158,21 @@ const ReportMethod = () => {
 
           {/* Link to Register */}
           <p className=" text-white mt-6 text-center">
-         
-            <Link
-              to="/onboarding/payment"
+            <button
               className="underline text-white hover:text-blue-200"
+              onClick={async (e) => {
+                e.preventDefault();
+                try {
+                  await api.post('api/accounts/skip-station-onboarding/', {
+                    station_id: getStationId(),
+                    step: 'payment',
+                  });
+                } catch {}
+                navigate('/onboarding/payment');
+              }}
             >
               Skip
-            </Link>
+            </button>
           </p>
         </div>
       </div>

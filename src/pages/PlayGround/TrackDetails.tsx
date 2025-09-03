@@ -82,7 +82,7 @@ const TrackDetailsPage = () => {
   const [mapExpanded, setMapExpanded] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 text-white p-6">
       <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 space-y-8">
 
         {/* 🎵 Header & Actions */}

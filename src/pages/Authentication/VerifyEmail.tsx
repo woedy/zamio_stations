@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { baseUrl } from '../../constants';
+import api from '../../lib/api';
 import ButtonLoader from '../../common/button_loader';
 
 const VerifyEmail = () => {
@@ -39,30 +40,12 @@ const VerifyEmail = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(baseUrl + 'api/accounts/verify-station-email/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email: email, 
-          email_token: code, 
-        }),
+      const resp = await api.post('api/accounts/verify-station-email/', {
+        email: email,
+        email_token: code,
       });
 
-      const data = await response.json();
-
-    
-      if (!response.ok) {
-        // Display the first error message from the errors object
-        if (data.errors) {
-          const errorMessages = Object.values(data.errors).flat();
-          setInputError(errorMessages.join('\n'));
-        } else {
-          setInputError(data.message || 'Failed to Verify');
-        }
-        return; // Prevent further code execution
-      }
-
-      // Success
+      const data = resp.data;
 
       localStorage.setItem('first_name', data.data.first_name);
       localStorage.setItem('last_name', data.data.last_name);
@@ -82,8 +65,14 @@ const VerifyEmail = () => {
       }
 
 
-    } catch (err) {
-      setInputError('Verification error. Please try again.');
+    } catch (err: any) {
+      const data = err?.response?.data;
+      if (data?.errors) {
+        const errorMessages = Object.values(data.errors).flat() as string[];
+        setInputError(errorMessages.join('\n'));
+      } else {
+        setInputError(data?.message || 'Verification error. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -96,32 +85,16 @@ const VerifyEmail = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(baseUrl + 'api/accounts/resend-email-verification/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email: email
-        }),
-      });
-
-      const data = await response.json();
-
-    
-      if (!response.ok) {
-        // Display the first error message from the errors object
-        if (data.errors) {
-          const errorMessages = Object.values(data.errors).flat();
-          setInputError(errorMessages.join('\n'));
-        } else {
-          setInputError(data.message || 'Failed to Resend Verification');
-        }
-        return; // Prevent further code execution
-      }
-
-      // Success
+      await api.post('api/accounts/resend-email-verification/', { email });
       navigate('/verify-email', { state: { email } });
-    } catch (err) {
-      setInputError('Verification error. Please try again.');
+    } catch (err: any) {
+      const data = err?.response?.data;
+      if (data?.errors) {
+        const errorMessages = Object.values(data.errors).flat() as string[];
+        setInputError(errorMessages.join('\n'));
+      } else {
+        setInputError(data?.message || 'Verification error. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

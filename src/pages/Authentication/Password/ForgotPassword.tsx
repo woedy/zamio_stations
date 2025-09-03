@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { baseUrl } from '../../../constants';
+import api from '../../../lib/api';
 import ButtonLoader from '../../../common/button_loader';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -40,7 +41,7 @@ const ForgotPassword = () => {
 
     if (!isValid) return;
 
-    const url = baseUrl + 'api/accounts/forgot-user-password/';
+    const url = 'api/accounts/forgot-user-password/';
     const data = {
       email,
     };
@@ -48,25 +49,13 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      const responseData = await response.json();
-
-      if (response.status === 200) {
-        
-        navigate('/confirm-password-otp', { state: { email } });
-
-      } else if (response.status === 400) {
-        setEmailError(responseData.errors?.email?.[0] || '');
-      } else {
-        console.error('Reset failed:', responseData.message);
-      }
-    } catch (error) {
-      console.error('Error:', error.message);
+      await api.post(url, data);
+      navigate('/confirm-password-otp', { state: { email } });
+    } catch (error: any) {
+      const data = error?.response?.data;
+      const emailMsg = data?.errors?.email?.[0];
+      if (emailMsg) setEmailError(emailMsg);
+      else setEmailError(data?.message || 'Reset failed');
     } finally {
       setLoading(false);
     }

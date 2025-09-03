@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { baseUrl } from '../../constants';
+import api from '../../lib/api';
 import ButtonLoader from '../../common/button_loader';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -85,35 +86,26 @@ const SignUp = () => {
     formData.append('last_name', lastName);
     formData.append('station_name', stationName);
 
-    // Make a POST request to the server
-    const url = baseUrl + 'api/accounts/register-station/';
+    // Use relative API path to leverage Vite proxy in dev
+    const url = 'api/accounts/register-station/';
 
     try {
       setLoading(true);
-      const response = await fetch(url, {
-        method: 'POST',
-        body: formData,
+      const resp = await api.post(url, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Display the first error message from the errors object
-        if (data.errors) {
-          const errorMessages = Object.values(data.errors).flat();
-          setInputError(errorMessages.join('\n'));
-        } else {
-          setInputError(data.message || 'Failed to register');
-        }
-        return; // Prevent further code execution
+      if (resp.status === 200) {
+        navigate('/verify-email', { state: { email } });
       }
-
-      // Registration successful
-      console.log('User registered successfully');
-      navigate('/verify-email', { state: { email } });
     } catch (error) {
-      console.error('Error registering user:', error.message);
-      setInputError('Failed to register');
+      const msg = (error as any)?.response?.data?.message || (error as any)?.message || 'Failed to register';
+      const errs = (error as any)?.response?.data?.errors;
+      if (errs) {
+        const flat = Object.values(errs).flat() as string[];
+        setInputError(flat.join('\n'));
+      } else {
+        setInputError(msg);
+      }
     } finally {
       setLoading(false);
     }

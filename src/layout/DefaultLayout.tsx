@@ -22,7 +22,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children, hiddenOnRoutes 
   });
 
   return (
-    <div className=" dark:bg-boxdark-2 dark:text-bodydark ">
+    <div className="app-shell dark:bg-boxdark-2 dark:text-bodydark ">
       <div className="flex h-screen overflow-hidden">
         {/* Conditionally render Sidebar */}
         {!hideSidebarAndHeader && (

@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { artistID, baseUrl, stationID } from '../../../constants';
+import { baseUrl, stationID } from '../../../constants';
+import { getStationId } from '../../../lib/auth';
+import api from '../../../lib/api';
 import ButtonLoader from '../../../common/button_loader';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 const AddStaff = () => {
 
-  const [facebook, setFacebook] = useState('');
-  const [twitter, setTwitter] = useState('');
-  const [instagram, setInstagram] = useState('');
-  const [youtube, setYoutube] = useState('');
+  const [staff, setStaff] = useState<Array<{ name: string; email: string; role: string }>>([
+    { name: '', email: '', role: '' },
+  ]);
 
 
 
@@ -27,64 +28,24 @@ const AddStaff = () => {
       setInputError('');
     
       // Frontend validations
-      if (facebook === '') {
-        setInputError('Facebook required.');
-        return;
-      }
-    
-      if (twitter === '') {
-        setInputError('Twitter required.');
-        return;
-      }
-    
-      if (instagram === '') {
-        setInputError('Insgatram required.');
-        return;
-      }
-
-      if (youtube === '') {
-        setInputError('Youtube required.');
+      const cleaned = staff
+        .map((s) => ({ name: s.name.trim(), email: (s.email || '').trim(), role: s.role.trim() }))
+        .filter((s) => s.name && s.role);
+      if (cleaned.length === 0) {
+        setInputError('Please add at least one staff with a role.');
         return;
       }
 
     
-      // Prepare FormData for file upload
-      const formData = new FormData();
-      formData.append('station_id', stationID);
-      formData.append('facebook', facebook);
-      formData.append('twitter', twitter);
-      formData.append('instagram', instagram);
-      formData.append('youtube', youtube);
-    
-      const url = baseUrl + 'api/accounts/complete-station-report-method/';
+      const url = 'api/accounts/complete-add-staff/';
     
       try {
         setLoading(true);
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            Authorization: `Token ${localStorage.getItem('token')}`,
-          },
-          body: formData,
-        });
-    
-        const data = await response.json();
-    
-        if (!response.ok) {
-          if (data.errors) {
-            const errorMessages = Object.values(data.errors).flat();
-            setInputError(errorMessages.join('\n'));
-          } else {
-            setInputError(data.message || 'Failed to update social.');
-          }
-          return;
+        const resp = await api.post(url, { station_id: getStationId(), staff: cleaned });
+        let nextStep = resp.data?.data?.next_step as string | undefined;
+        if (!nextStep || nextStep === 'staff') {
+          nextStep = 'report';
         }
-    
-        // ✅ Successful submission
-        console.log('Social updated successfully');
-    
-        // Move to next onboarding step (backend returns this)
-        const nextStep = data.data.next_step;
     
         switch (nextStep) {
           case 'profile':
@@ -94,7 +55,7 @@ const AddStaff = () => {
             navigate('/onboarding/staff');
             break;
           case 'report':
-            navigate('/onboarding/report');
+            navigate('/onboarding/payment');
             break;
           case 'payment':
             navigate('/onboarding/payment');
@@ -148,32 +109,54 @@ const AddStaff = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
          
-            <div className="">
-          
-              <input
-                type="text"
-                name="fullname"
-                placeholder="Full Name"
-                value={facebook}
-                onChange={(e) => setFacebook(e.target.value)}
-                className="w-full px-6 py-4 bg-white/20 backdrop-blur-md border mb-2 border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={facebook}
-                onChange={(e) => setFacebook(e.target.value)}
-                className="w-full px-6 py-4 bg-white/20 mb-2 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-              <input
-                type="text"
-                name="role"
-                placeholder="Role"
-                value={facebook}
-                onChange={(e) => setFacebook(e.target.value)}
-                className="w-full px-6 py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-lg text-white placeholder-white  focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
+            {staff.map((row, idx) => (
+              <div key={idx} className="grid grid-cols-3 gap-2">
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  value={row.name}
+                  onChange={(e) => {
+                    const c = [...staff];
+                    c[idx].name = e.target.value;
+                    setStaff(c);
+                  }}
+                  className="w-full px-4 py-3 bg-white/20 backdrop-blur-md border mb-2 border-white/30 rounded-lg text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <input
+                  type="email"
+                  placeholder="Email (optional)"
+                  value={row.email}
+                  onChange={(e) => {
+                    const c = [...staff];
+                    c[idx].email = e.target.value;
+                    setStaff(c);
+                  }}
+                  className="w-full px-4 py-3 bg-white/20 backdrop-blur-md border mb-2 border-white/30 rounded-lg text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <select
+                  value={row.role}
+                  onChange={(e) => {
+                    const c = [...staff];
+                    c[idx].role = e.target.value;
+                    setStaff(c);
+                  }}
+                  className="w-full px-4 py-3 bg-white/20 backdrop-blur-md border mb-2 border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="" className="bg-[#1a2a6c]">Select Role</option>
+                  <option value="Producer" className="bg-[#1a2a6c]">Producer</option>
+                  <option value="Presenter" className="bg-[#1a2a6c]">Presenter</option>
+                  <option value="Dj" className="bg-[#1a2a6c]">Dj</option>
+                </select>
+              </div>
+            ))}
+            <div>
+              <button
+                type="button"
+                onClick={() => setStaff((s) => [...s, { name: '', email: '', role: '' }])}
+                className="px-4 py-2 bg-white/20 text-white rounded-lg border border-white/30 hover:bg-white/25"
+              >
+                + Add another
+              </button>
             </div>
      
 
@@ -192,13 +175,21 @@ const AddStaff = () => {
 
           {/* Link to Register */}
           <p className=" text-white mt-6 text-center">
-         
-            <Link
-              to="/onboarding/report"
+            <button
               className="underline text-white hover:text-blue-200"
+              onClick={async (e) => {
+                e.preventDefault();
+                try {
+                  await api.post('api/accounts/skip-station-onboarding/', {
+                    station_id: getStationId(),
+                    step: 'payment',
+                  });
+                } catch {}
+                navigate('/onboarding/payment');
+              }}
             >
               Skip
-            </Link>
+            </button>
           </p>
         </div>
       </div>

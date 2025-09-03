@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { baseUrl, stationID } from '../../../constants';
+import { getStationId } from '../../../lib/auth';
+import api from '../../../lib/api';
 import ButtonLoader from '../../../common/button_loader';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -35,39 +37,19 @@ const PaymentInfo = () => {
     
       // Prepare FormData for file upload
       const formData = new FormData();
-      formData.append('station_id', stationID);
+      formData.append('station_id', getStationId());
       formData.append('momo', momo);
       formData.append('bankAccount', bankAccount);
     
-      const url = baseUrl + 'api/accounts/complete-station-payment/';
+      const url = 'api/accounts/complete-station-payment/';
     
       try {
         setLoading(true);
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            Authorization: `Token ${localStorage.getItem('token')}`,
-          },
-          body: formData,
-        });
-    
-        const data = await response.json();
-    
-        if (!response.ok) {
-          if (data.errors) {
-            const errorMessages = Object.values(data.errors).flat();
-            setInputError(errorMessages.join('\n'));
-          } else {
-            setInputError(data.message || 'Failed to update social.');
-          }
-          return;
+        const resp = await api.post(url, formData);
+        let nextStep = resp.data?.data?.next_step as string | undefined;
+        if (!nextStep || nextStep === 'payment') {
+          nextStep = 'done';
         }
-    
-        // ✅ Successful submission
-        console.log('Payment updated successfully');
-    
-        // Move to next onboarding step (backend returns this)
-        const nextStep = data.data.next_step;
     
         switch (nextStep) {
           case 'profile':
@@ -77,7 +59,7 @@ const PaymentInfo = () => {
             navigate('/onboarding/staff');
             break;
           case 'report':
-            navigate('/onboarding/report');
+            navigate('/onboarding/payment');
             break;
           case 'payment':
             navigate('/onboarding/payment');
@@ -103,7 +85,12 @@ const PaymentInfo = () => {
 
     const handleSkip = async (e) => {
       e.preventDefault();
-  
+      try {
+        await api.post('api/accounts/skip-station-onboarding/', {
+          station_id: getStationId(),
+          step: 'payment',
+        });
+      } catch {}
       navigate('/dashboard');
       window.location.reload();
     };
