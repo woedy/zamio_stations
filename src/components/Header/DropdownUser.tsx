@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import UserOne from '../../images/user/user-01.png';
-import { baseUrlMedia, userEmail, username, userPhoto } from '../../constants';
+import { baseUrlMedia, userEmail, userPhoto } from '../../constants';
 import ClickOutside from '../Sidebar/ClickOutside';
 
 const DropdownUser = () => {
-  console.log(username);
+  // Derive display name from stored profile data
+  const firstName = localStorage.getItem('first_name') || '';
+  const lastName = localStorage.getItem('last_name') || '';
+  const fallbackName = userEmail || 'User';
+  const displayName = `${firstName} ${lastName}`.trim() || fallbackName;
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
@@ -17,7 +21,7 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-          {`${username}`} 
+            {displayName}
           </span>
           <span className="block text-xs">{userEmail}</span>
         </span>
