@@ -157,13 +157,13 @@ export default function ReviewDetails() {
         throw new Error('Failed to flag the item');
       }
 
-      // Refresh the data after deletion
+      // Refresh the dispute details to reflect new status
       await fetchData();
-      setAlert({ message: 'Item flagd successfully', type: 'success' });
+      setAlert({ message: 'Dispute marked as resolved', type: 'success' });
     } catch (error) {
-      console.error('Error deleting item:', error);
+      console.error('Error resolving dispute:', error);
       setAlert({
-        message: 'An error occurred while deleting the item',
+        message: 'An error occurred while resolving the dispute',
         type: 'error',
       });
     } finally {
@@ -215,13 +215,13 @@ export default function ReviewDetails() {
               </div>
 
   
-              <button className="mt-4" 
-             onClick={() => openReviewModal(dispute.id)} 
-              >
-                <span className="px-5 py-3 text-xs bg-red-900 rounded">
-                 Review
-                </span>
-              </button>
+              {dispute?.dispute_status === 'Resolved' ? (
+                <span className="mt-4 inline-block px-5 py-3 text-xs bg-green-800 text-white rounded">Resolved</span>
+              ) : (
+                <button className="mt-4" onClick={() => openReviewModal(dispute.id)}>
+                  <span className="px-5 py-3 text-xs bg-red rounded">Review</span>
+                </button>
+              )}
         
             </div>
           </div>

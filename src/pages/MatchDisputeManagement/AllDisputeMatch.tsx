@@ -224,17 +224,33 @@ const AllDisputeMatches = () => {
                       <td className="px-4 py-2 text-green-400 font-medium">
                         ₵{log.earnings.toFixed(2)}
                       </td>
-                      <td className="px-4 py-2">{log.status}</td>
+                      <td className="px-4 py-2">
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-semibold ${
+                            log.status === 'Resolved'
+                              ? 'bg-green text-white'
+                              : log.status === 'Flagged'
+                              ? 'bg-red text-white'
+                              : 'bg-yellow text-white'
+                          }`}
+                        >
+                          {log.status || '—'}
+                        </span>
+                      </td>
 
                       <td className="px-4 py-2">{log.comment}</td>
                       <td className="px-4 py-2">{log.timestamp}</td>
                       <td className="px-4 py-2">
-                      <Link to="/match-dispute-details" state={{ dispute_id: log?.id }}>
-                        <button className="w-full text-xs bg-red-600 text-white py-2 rounded-sm font-semibold hover:shadow-lg transition-shadow">
-                          {' '}
-                          Review
-                        </button>
-
+                        <Link to="/match-dispute-details" state={{ dispute_id: log?.id }}>
+                          <button
+                            className={`w-full text-xs py-2 rounded-sm font-semibold hover:shadow-lg transition-shadow ${
+                              log.status === 'Resolved'
+                                ? 'bg-green text-white'
+                                : 'bg-red text-white'
+                            }`}
+                          >
+                            {log.status === 'Resolved' ? 'Resolved' : 'Review'}
+                          </button>
                         </Link>
                       </td>
                     </tr>
