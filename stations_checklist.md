@@ -1,5 +1,7 @@
 # ZamIO Stations — Delivery Checklist
 
+See also: [TestPlanOrder.md](../TestPlanOrder.md) for the daily smoke order and cross-checks with Artist/Admin.
+
 Legend: [ ] todo, [x] done, [~] in progress
 
 ## Hygiene & Environment
@@ -26,6 +28,7 @@ Legend: [ ] todo, [x] done, [~] in progress
 - [ ] Display match cards: title, artist, album, confidence, matched_at.
 - [ ] Upload & match: `.mp3`/`.wav` with result rendering and errors.
 - [ ] Input validation (URL, file size/type) + helpful messages.
+- [ ] Online stream capture: configure per‑station stream URL; show ingestion status
 
 ## Dashboard
 - [ ] KPIs: total songs detected (period/all‑time).
@@ -97,4 +100,3 @@ Legend: [ ] todo, [x] done, [~] in progress
 Notes:
 - Keep this checklist updated as items move to [~] or [x].
 - Link PRs/issues next to items when possible.
-

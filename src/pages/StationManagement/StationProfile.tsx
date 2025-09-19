@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Edit, Link as LinkIcon, Bell, Mail, X, Settings, Loader2, Plus } from 'lucide-react';
+import { Edit, Link as LinkIcon, Bell, Mail, X, Settings, Loader2, Plus, Users, Shield, ArrowRight, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../lib/api';
 
 type StationDetails = {
@@ -15,6 +16,7 @@ type StationDetails = {
 };
 
 const StationProfilePage = () => {
+  const navigate = useNavigate();
   const stationId = useMemo(() => {
     try {
       return localStorage.getItem('station_id') || '';
@@ -387,6 +389,54 @@ const StationProfilePage = () => {
               checked={prefs.weeklyDigest}
               onChange={() => setPrefs({ ...prefs, weeklyDigest: !prefs.weeklyDigest })}
             />
+          </div>
+        </div>
+
+        {/* 🔗 Quick Actions */}
+        <div className="bg-white/5 p-6 rounded-xl border border-white/20">
+          <h2 className="text-lg font-semibold text-white mb-4">Station Management</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button
+              onClick={() => navigate('/staff-management')}
+              className="flex items-center justify-between p-4 bg-white/10 rounded-lg hover:bg-white/20 transition-colors group"
+            >
+              <div className="flex items-center">
+                <Users className="w-6 h-6 text-blue-400 mr-3" />
+                <div className="text-left">
+                  <h3 className="text-white font-medium">Staff Management</h3>
+                  <p className="text-gray-400 text-sm">Manage station staff and permissions</p>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+            </button>
+            
+            <button
+              onClick={() => navigate('/compliance')}
+              className="flex items-center justify-between p-4 bg-white/10 rounded-lg hover:bg-white/20 transition-colors group"
+            >
+              <div className="flex items-center">
+                <Shield className="w-6 h-6 text-green-400 mr-3" />
+                <div className="text-left">
+                  <h3 className="text-white font-medium">Compliance & Verification</h3>
+                  <p className="text-gray-400 text-sm">Manage regulatory compliance</p>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+            </button>
+
+            <button
+              onClick={() => navigate('/playlog-management')}
+              className="flex items-center justify-between p-4 bg-white/10 rounded-lg hover:bg-white/20 transition-colors group"
+            >
+              <div className="flex items-center">
+                <FileText className="w-6 h-6 text-purple-400 mr-3" />
+                <div className="text-left">
+                  <h3 className="text-white font-medium">Playlog Management</h3>
+                  <p className="text-gray-400 text-sm">Upload and compare playlogs</p>
+                </div>
+              </div>
+              <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+            </button>
           </div>
         </div>
 

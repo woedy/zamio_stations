@@ -9,9 +9,11 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Router>
+    <ToastProvider position="top-right">
+        <Router>
       <App />
     </Router>
+      </ToastProvider>
   </React.StrictMode>,
 
   

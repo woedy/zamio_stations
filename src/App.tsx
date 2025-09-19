@@ -17,6 +17,9 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import MatchLogViewer from './pages/MatchLogViewer/FullDetectionTable';
 import AllDisputeMatches from './pages/MatchDisputeManagement/AllDisputeMatch';
 import StationProfilePage from './pages/StationManagement/StationProfile';
+import StationStaffManagement from './pages/StationManagement/StationStaffManagement';
+import StationCompliance from './pages/StationManagement/StationCompliance';
+import PlaylogManagement from './pages/StationManagement/PlaylogManagement';
 import NotificationCenter from './pages/NotificationCenter/NotificationCenter';
 import EducationSupport from './pages/Education&Support/HelpSupport';
 import DisputeDetails from './pages/MatchDisputeManagement/DisputeDetails';
@@ -97,6 +100,33 @@ function App() {
             <>
               <PageTitle title="Station Profile | ZamIO Stations" />
               <StationProfilePage />
+            </>
+          }
+        />
+        <Route
+          path="/staff-management"
+          element={
+            <>
+              <PageTitle title="Staff Management | ZamIO Stations" />
+              <StationStaffManagement />
+            </>
+          }
+        />
+        <Route
+          path="/compliance"
+          element={
+            <>
+              <PageTitle title="Station Compliance | ZamIO Stations" />
+              <StationCompliance />
+            </>
+          }
+        />
+        <Route
+          path="/playlog-management"
+          element={
+            <>
+              <PageTitle title="Playlog Management | ZamIO Stations" />
+              <PlaylogManagement />
             </>
           }
         />
